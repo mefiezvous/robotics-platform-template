@@ -37,3 +37,6 @@ License: Apache-2.0. Python 3.12+. Author: Arthur Mouraud.
 - Conventional commits: feat:, fix:, docs:, chore:, refactor:, test:
 - Feature branches, PRs required
 - No direct commits to main
+
+## État du projet
+Voir **STATUS.md** — ce qui est implémenté, ce qui reste, les consommateurs du layer.
