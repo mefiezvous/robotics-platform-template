@@ -1,5 +1,5 @@
 # Status — robotics-platform-template
-_Dernière mise à jour : 2026-05-20 · Session 1_
+_Dernière mise à jour : 2026-05-20 · Session 2_
 
 ## Ce qui est fait
 
@@ -17,11 +17,13 @@ _Dernière mise à jour : 2026-05-20 · Session 1_
 - [x] `NOTICE` file (Apache-2.0 + "may become restrictive")
 - [x] `configs/hal/sim_adapter.yaml` — Hydra config adapter
 
+### Publication & CI
+- [x] Publié sur GitHub (`mefiezvous/robotics-platform-template`) — tag v0.1.0
+- [x] GitHub Actions CI : lint (ruff) + typecheck (mypy) + test (pytest --cov 100%)
+
 ## Ce qui reste
 
-- [ ] Publier le repo sur GitHub (`mefiezvous/robotics-platform-template`) — actuellement local only
-- [ ] GitHub Actions CI (copier le pattern du layer public)
-- [ ] Versionner via tags git (v0.1.0) avant publication
+_(rien — layer complet)_
 
 ## Dépendances
 ```
