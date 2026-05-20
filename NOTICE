@@ -1,0 +1,14 @@
+robotics-platform-template
+Copyright 2026 Arthur Mouraud
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+NOTICE TO USERS: The maintainer reserves the right to change the license
+of this template in future major versions. Current users receive rights
+under Apache-2.0 for the version they received. Future versions (v2.0+)
+may carry more restrictive terms. Pin your dependency to a specific version
+if license stability is required.

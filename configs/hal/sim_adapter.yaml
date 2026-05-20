@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2026 Arthur Mouraud
+# SPDX-License-Identifier: Apache-2.0
+hal:
+  adapter: sim_panda
+  sim_adapter:
+    env_name: CubeReachV1
+    seed: 42
+    joint_limit_scale: 0.9

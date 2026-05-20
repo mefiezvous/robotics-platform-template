@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2026 Arthur Mouraud
+# SPDX-License-Identifier: Apache-2.0
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "robotics-platform-template"
+version = "0.1.0"
+description = "Hardware Abstraction Layer (HAL) template for robotics projects"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+authors = [{ name = "Arthur Mouraud", email = "127029130+mefiezvous@users.noreply.github.com" }]
+keywords = ["robotics", "hal", "abstraction", "protocol", "mujoco"]
+dependencies = [
+    "numpy>=1.26",
+    "loguru>=0.7",
+]
+
+[project.optional-dependencies]
+sim = [
+    "mujoco==3.5.0",
+    "mujoco_playground==0.2.0",
+]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.9",
+    "mypy>=1.10",
+    "pre-commit>=3",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "ANN", "S", "B"]
+ignore = ["ANN101", "ANN102", "S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=src/platform/hal --cov-report=term-missing --cov-fail-under=100"
+markers = [
+    "unit: fast unit tests",
+    "integration: tests requiring simulation",
+]
+testpaths = ["tests"]

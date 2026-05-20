@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+dist/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+secrets/
+_private/
+my-robot-stack/
+proprietary_*
+.DS_Store
+Thumbs.db
