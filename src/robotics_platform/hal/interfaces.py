@@ -4,7 +4,7 @@
 
 from typing import Protocol, runtime_checkable
 
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 @runtime_checkable

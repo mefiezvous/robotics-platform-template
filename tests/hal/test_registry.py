@@ -4,8 +4,8 @@
 
 import pytest
 
-from platform.hal.registry import AdapterRegistry, register
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.registry import AdapterRegistry, register
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 class DummyAdapter:
@@ -52,6 +52,7 @@ class TestAdapterRegistry:
 
     def test_register_overwrite_warns(self) -> None:
         """Registering the same name twice should log a warning (not raise)."""
+
         @register("test_overwrite_adapter")
         class First(DummyAdapter):
             pass

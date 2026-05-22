@@ -11,9 +11,9 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from platform.hal.interfaces import RobotInterface
-from platform.hal.sim_adapter import SimRobotAdapter
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.interfaces import RobotInterface
+from robotics_platform.hal.sim_adapter import SimRobotAdapter
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 def _make_fake_mp(mock_env: MagicMock) -> ModuleType:
@@ -117,7 +117,9 @@ class TestSimRobotAdapterLifecycle:
 class TestSimRobotAdapterSafety:
     def test_safe_joint_action(self) -> None:
         adapter = SimRobotAdapter()
-        action = Action(joint_targets=np.zeros(7))
+        # Joint 4 (index 3) limits are [-3.07, -0.07]*0.9 — must be negative.
+        safe_targets = np.array([0.0, -0.5, 0.0, -2.0, 0.0, 1.5, 0.5])
+        action = Action(joint_targets=safe_targets)
         assert adapter.is_safe(action) is True
 
     def test_unsafe_joint_action_exceeds_limits(self) -> None:
@@ -177,6 +179,14 @@ class TestSimRobotAdapterActionConversion:
             obs = adapter.reset()
         assert "wrist_cam" in obs.images
         assert obs.images["wrist_cam"].shape == (64, 64, 3)
+
+    def test_action_with_no_targets_raises(self) -> None:
+        adapter = SimRobotAdapter()
+        mock_action = MagicMock()
+        mock_action.joint_targets = None
+        mock_action.ee_target = None
+        with pytest.raises(ValueError, match="neither joint_targets nor ee_target"):
+            adapter._action_to_array(mock_action)
 
 
 class TestSimRobotAdapterMissingDep:

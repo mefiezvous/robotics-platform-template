@@ -9,8 +9,8 @@ from typing import Any
 import numpy as np
 from loguru import logger
 
-from platform.hal.interfaces import RobotInterface
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.interfaces import RobotInterface
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 class SimRobotAdapter:
@@ -41,7 +41,8 @@ class SimRobotAdapter:
     def _ensure_env(self) -> None:
         if self._env is None:
             try:
-                import mujoco_playground as mp  # type: ignore[import]
+                import mujoco_playground as mp  # type: ignore[import-not-found]
+
                 self._env = mp.make(self._env_name)
             except ImportError as e:
                 raise RuntimeError(
@@ -58,15 +59,18 @@ class SimRobotAdapter:
                 has_cameras=["wrist_cam"],
                 sim_only=True,
                 max_control_hz=50.0,
-                joint_limits=np.array([
-                    [-2.8973, 2.8973],
-                    [-1.7628, 1.7628],
-                    [-2.8973, 2.8973],
-                    [-3.0718, -0.0698],
-                    [-2.8973, 2.8973],
-                    [-0.0175, 3.7525],
-                    [-2.8973, 2.8973],
-                ]) * self._joint_limit_scale,
+                joint_limits=np.array(
+                    [
+                        [-2.8973, 2.8973],
+                        [-1.7628, 1.7628],
+                        [-2.8973, 2.8973],
+                        [-3.0718, -0.0698],
+                        [-2.8973, 2.8973],
+                        [-0.0175, 3.7525],
+                        [-2.8973, 2.8973],
+                    ]
+                )
+                * self._joint_limit_scale,
             )
         return self._capabilities
 
@@ -97,8 +101,7 @@ class SimRobotAdapter:
         if action.joint_targets is not None:
             limits = caps.joint_limits
             within = np.all(
-                (action.joint_targets >= limits[:, 0])
-                & (action.joint_targets <= limits[:, 1])
+                (action.joint_targets >= limits[:, 0]) & (action.joint_targets <= limits[:, 1])
             )
             return bool(within)
         return True
@@ -112,9 +115,7 @@ class SimRobotAdapter:
             joint_velocities=np.asarray(
                 obs_dict.get("joint_velocities", np.zeros(7)), dtype=np.float32
             ),
-            ee_pose=np.asarray(
-                obs_dict.get("ee_pose", np.zeros(7)), dtype=np.float32
-            ),
+            ee_pose=np.asarray(obs_dict.get("ee_pose", np.zeros(7)), dtype=np.float32),
             images={
                 k: np.asarray(v, dtype=np.uint8)
                 for k, v in obs_dict.items()
@@ -124,15 +125,19 @@ class SimRobotAdapter:
 
     def _action_to_array(self, action: Action) -> np.ndarray:
         if action.joint_targets is not None:
-            return np.concatenate([
-                action.joint_targets.astype(np.float32),
-                np.array([action.gripper_state], dtype=np.float32),
-            ])
+            return np.concatenate(
+                [
+                    action.joint_targets.astype(np.float32),
+                    np.array([action.gripper_state], dtype=np.float32),
+                ]
+            )
         if action.ee_target is not None:
-            return np.concatenate([
-                action.ee_target.astype(np.float32),
-                np.array([action.gripper_state], dtype=np.float32),
-            ])
+            return np.concatenate(
+                [
+                    action.ee_target.astype(np.float32),
+                    np.array([action.gripper_state], dtype=np.float32),
+                ]
+            )
         raise ValueError("Action has neither joint_targets nor ee_target")
 
 

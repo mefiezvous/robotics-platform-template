@@ -12,7 +12,7 @@ License: Apache-2.0. Python 3.12+. Author: Arthur Mouraud.
 4. SPDX header required at top of every .py file:
    `# SPDX-FileCopyrightText: 2026 Arthur Mouraud`
    `# SPDX-License-Identifier: Apache-2.0`
-5. HAL coverage is non-negotiable: 100% on `src/platform/hal/`
+5. HAL coverage is non-negotiable: 100% on `src/robotics_platform/hal/`
 
 ## What Belongs Here
 - RobotInterface Protocol (abstract contract)
@@ -31,7 +31,7 @@ License: Apache-2.0. Python 3.12+. Author: Arthur Mouraud.
 - Type hints everywhere, mypy strict
 - Google-style docstrings for all public API
 - Protocol-based design (structural subtyping, no ABC inheritance required)
-- Tests: 100% coverage on src/platform/hal/ (enforced by --cov-fail-under=100)
+- Tests: 100% coverage on src/robotics_platform/hal/ (enforced by --cov-fail-under=100)
 
 ## Workflow
 - Conventional commits: feat:, fix:, docs:, chore:, refactor:, test:

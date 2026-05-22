@@ -69,6 +69,4 @@ class RobotCapabilities:
     has_cameras: list[str] = field(default_factory=lambda: ["wrist_cam"])
     sim_only: bool = True
     max_control_hz: float = 50.0
-    joint_limits: np.ndarray = field(
-        default_factory=lambda: np.array([[-2.9, 2.9]] * 7)
-    )
+    joint_limits: np.ndarray = field(default_factory=lambda: np.array([[-2.9, 2.9]] * 7))

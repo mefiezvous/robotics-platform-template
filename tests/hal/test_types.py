@@ -5,7 +5,7 @@
 import numpy as np
 import pytest
 
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 class TestObservation:

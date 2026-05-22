@@ -34,7 +34,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/platform"]
+packages = ["src/robotics_platform"]
 
 [tool.ruff]
 line-length = 100
@@ -42,7 +42,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "ANN", "S", "B"]
-ignore = ["ANN101", "ANN102", "S101"]
+ignore = ["S101"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -51,7 +51,7 @@ disallow_untyped_defs = true
 warn_unused_ignores = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=src/platform/hal --cov-report=term-missing --cov-fail-under=100"
+addopts = "--cov=src/robotics_platform/hal --cov-report=term-missing --cov-fail-under=100"
 markers = [
     "unit: fast unit tests",
     "integration: tests requiring simulation",

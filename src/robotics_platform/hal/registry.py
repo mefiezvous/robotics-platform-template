@@ -4,17 +4,18 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from loguru import logger
 
 if TYPE_CHECKING:
-    from platform.hal.interfaces import RobotInterface
+    from robotics_platform.hal.interfaces import RobotInterface
 
 _REGISTRY: dict[str, type] = {}
 
 
-def register(name: str) -> type:
+def register(name: str) -> Callable[[type], type]:
     """Class decorator to register an adapter by name.
 
     Args:
@@ -23,12 +24,14 @@ def register(name: str) -> type:
     Returns:
         The decorated class unchanged.
     """
+
     def decorator(cls: type) -> type:
         if name in _REGISTRY:
             logger.warning(f"AdapterRegistry: overwriting existing adapter '{name}'")
         _REGISTRY[name] = cls
         logger.debug(f"AdapterRegistry: registered '{name}' -> {cls.__name__}")
         return cls
+
     return decorator
 
 
@@ -50,10 +53,8 @@ class AdapterRegistry:
         """
         if name not in _REGISTRY:
             available = list(_REGISTRY.keys())
-            raise KeyError(
-                f"No adapter registered as '{name}'. Available: {available}"
-            )
-        return _REGISTRY[name]  # type: ignore[return-value]
+            raise KeyError(f"No adapter registered as '{name}'. Available: {available}")
+        return _REGISTRY[name]
 
     @staticmethod
     def list_adapters() -> list[str]:

@@ -4,8 +4,8 @@
 
 import numpy as np
 
-from platform.hal.interfaces import RobotInterface
-from platform.hal.types import Action, Observation, RobotCapabilities
+from robotics_platform.hal.interfaces import RobotInterface
+from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
 class MinimalAdapter:
