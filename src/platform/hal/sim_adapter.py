@@ -45,8 +45,8 @@ class SimRobotAdapter:
                 self._env = mp.make(self._env_name)
             except ImportError as e:
                 raise RuntimeError(
-                    "mujoco_playground not installed. "
-                    "Install with: uv sync --extra sim"
+                    "mujoco_playground not installed. Install from: "
+                    "pip install git+https://github.com/google-deepmind/mujoco_playground"
                 ) from e
 
     def get_capabilities(self) -> RobotCapabilities:

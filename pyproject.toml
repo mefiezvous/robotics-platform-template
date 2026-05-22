@@ -22,8 +22,9 @@ dependencies = [
 [project.optional-dependencies]
 sim = [
     "mujoco==3.5.0",
-    "mujoco_playground==0.2.0",
 ]
+# mujoco_playground is not on PyPI — install manually if needed:
+# pip install git+https://github.com/google-deepmind/mujoco_playground
 dev = [
     "pytest>=8",
     "pytest-cov>=5",
