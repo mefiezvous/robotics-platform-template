@@ -33,6 +33,9 @@ dev = [
     "pre-commit>=3",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/platform"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"

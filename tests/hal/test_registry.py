@@ -49,3 +49,17 @@ class TestAdapterRegistry:
     def test_list_adapters_returns_list(self) -> None:
         adapters = AdapterRegistry.list_adapters()
         assert isinstance(adapters, list)
+
+    def test_register_overwrite_warns(self) -> None:
+        """Registering the same name twice should log a warning (not raise)."""
+        @register("test_overwrite_adapter")
+        class First(DummyAdapter):
+            pass
+
+        @register("test_overwrite_adapter")
+        class Second(DummyAdapter):
+            pass
+
+        # Second registration should win
+        cls = AdapterRegistry.get("test_overwrite_adapter")
+        assert cls is Second

@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import sys
+from types import ModuleType
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -12,6 +14,13 @@ import pytest
 from platform.hal.interfaces import RobotInterface
 from platform.hal.sim_adapter import SimRobotAdapter
 from platform.hal.types import Action, Observation, RobotCapabilities
+
+
+def _make_fake_mp(mock_env: MagicMock) -> ModuleType:
+    """Return a fake mujoco_playground module whose make() returns mock_env."""
+    fake = ModuleType("mujoco_playground")
+    fake.make = MagicMock(return_value=mock_env)  # type: ignore[attr-defined]
+    return fake
 
 
 def make_mock_env() -> MagicMock:
@@ -60,7 +69,8 @@ class TestSimRobotAdapterLifecycle:
     def test_reset_returns_observation(self) -> None:
         adapter = SimRobotAdapter()
         mock_env = make_mock_env()
-        with patch("mujoco_playground.make", return_value=mock_env):
+        fake_mp = _make_fake_mp(mock_env)
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
             obs = adapter.reset()
         assert isinstance(obs, Observation)
         assert obs.joint_positions.shape == (7,)
@@ -68,8 +78,9 @@ class TestSimRobotAdapterLifecycle:
     def test_step_returns_tuple(self) -> None:
         adapter = SimRobotAdapter()
         mock_env = make_mock_env()
+        fake_mp = _make_fake_mp(mock_env)
         action = Action(joint_targets=np.zeros(7))
-        with patch("mujoco_playground.make", return_value=mock_env):
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
             adapter.reset()
             obs, reward, done, info = adapter.step(action)
         assert isinstance(obs, Observation)
@@ -80,7 +91,8 @@ class TestSimRobotAdapterLifecycle:
     def test_close_releases_env(self) -> None:
         adapter = SimRobotAdapter()
         mock_env = make_mock_env()
-        with patch("mujoco_playground.make", return_value=mock_env):
+        fake_mp = _make_fake_mp(mock_env)
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
             adapter.reset()
             assert adapter._env is not None
             adapter.close()
@@ -90,6 +102,16 @@ class TestSimRobotAdapterLifecycle:
     def test_close_without_reset_is_safe(self) -> None:
         adapter = SimRobotAdapter()
         adapter.close()
+
+    def test_ensure_env_not_called_twice(self) -> None:
+        """Second reset should reuse the existing env (no double-make)."""
+        adapter = SimRobotAdapter()
+        mock_env = make_mock_env()
+        fake_mp = _make_fake_mp(mock_env)
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
+            adapter.reset()
+            adapter.reset()
+        assert fake_mp.make.call_count == 1  # type: ignore[attr-defined]
 
 
 class TestSimRobotAdapterSafety:
@@ -113,9 +135,10 @@ class TestSimRobotAdapterActionConversion:
     def test_joint_action_conversion(self) -> None:
         adapter = SimRobotAdapter()
         mock_env = make_mock_env()
+        fake_mp = _make_fake_mp(mock_env)
         targets = np.ones(7) * 0.1
         action = Action(joint_targets=targets, gripper_state=0.5)
-        with patch("mujoco_playground.make", return_value=mock_env):
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
             adapter.reset()
             adapter.step(action)
         call_args = mock_env.step.call_args[0][0]
@@ -126,18 +149,41 @@ class TestSimRobotAdapterActionConversion:
     def test_ee_action_conversion(self) -> None:
         adapter = SimRobotAdapter()
         mock_env = make_mock_env()
+        fake_mp = _make_fake_mp(mock_env)
         pose = np.array([0.5, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0])
         action = Action(ee_target=pose, gripper_state=1.0)
-        with patch("mujoco_playground.make", return_value=mock_env):
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
             adapter.reset()
             adapter.step(action)
         call_args = mock_env.step.call_args[0][0]
         assert call_args.shape == (8,)
 
+    def test_dict_to_observation_with_image(self) -> None:
+        """Cover the image extraction branch in _dict_to_observation."""
+        adapter = SimRobotAdapter()
+        mock_env = make_mock_env()
+        # Add a 3D array to obs_dict so the image-extraction branch runs
+        img = np.zeros((64, 64, 3), dtype=np.uint8)
+        obs_dict_with_img = {
+            "time": 0.0,
+            "joint_positions": np.zeros(7, dtype=np.float32),
+            "joint_velocities": np.zeros(7, dtype=np.float32),
+            "ee_pose": np.zeros(7, dtype=np.float32),
+            "wrist_cam": img,
+        }
+        mock_env.reset.return_value = (obs_dict_with_img, {})
+        fake_mp = _make_fake_mp(mock_env)
+        with patch.dict(sys.modules, {"mujoco_playground": fake_mp}):
+            obs = adapter.reset()
+        assert "wrist_cam" in obs.images
+        assert obs.images["wrist_cam"].shape == (64, 64, 3)
+
 
 class TestSimRobotAdapterMissingDep:
     def test_raises_on_missing_mujoco_playground(self) -> None:
         adapter = SimRobotAdapter()
-        with patch.dict("sys.modules", {"mujoco_playground": None}):
+        # Setting the module to None in sys.modules makes Python raise ImportError
+        # when "import mujoco_playground" is executed inside _ensure_env.
+        with patch.dict(sys.modules, {"mujoco_playground": None}):  # type: ignore[dict-item]
             with pytest.raises(RuntimeError, match="mujoco_playground not installed"):
                 adapter.reset()
