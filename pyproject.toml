@@ -51,7 +51,7 @@ disallow_untyped_defs = true
 warn_unused_ignores = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=src/robotics_platform/hal --cov-report=term-missing --cov-fail-under=100"
+addopts = "--cov=src/robotics_platform/hal --cov=src/robotics_platform/envs --cov-report=term-missing --cov-fail-under=100"
 markers = [
     "unit: fast unit tests",
     "integration: tests requiring simulation",
