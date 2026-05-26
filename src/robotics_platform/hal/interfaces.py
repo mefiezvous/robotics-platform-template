@@ -14,6 +14,10 @@ class RobotInterface(Protocol):
     Any class implementing these methods is structurally compatible,
     regardless of inheritance. Use isinstance(obj, RobotInterface)
     to verify at runtime.
+
+    Deprecated since 2026-05-25 (ADR-001) — will be removed in v0.2.0.
+    New adapters MUST implement ``robotics_platform.envs.interfaces.EnvAdapter``
+    instead.
     """
 
     def get_capabilities(self) -> RobotCapabilities:

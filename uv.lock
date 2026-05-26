@@ -637,6 +637,7 @@ source = { editable = "." }
 dependencies = [
     { name = "loguru" },
     { name = "numpy" },
+    { name = "typing-extensions" },
 ]
 
 [package.optional-dependencies]
@@ -661,6 +662,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
+    { name = "typing-extensions", specifier = ">=4.5" },
 ]
 provides-extras = ["sim", "dev"]
 

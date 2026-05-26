@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Arthur Mouraud
 # SPDX-License-Identifier: Apache-2.0
-"""SimRobotAdapter — generic MuJoCo Playground adapter implementing RobotInterface."""
+"""SimRobotAdapter — generic MuJoCo Playground adapter implementing RobotInterface.
+
+Deprecated since 2026-05-25 — see docs/adr/ADR-001-unify-on-envadapter.md.
+"""
 
 from __future__ import annotations
 
@@ -8,11 +11,17 @@ from typing import Any
 
 import numpy as np
 from loguru import logger
+from typing_extensions import deprecated
 
 from robotics_platform.hal.interfaces import RobotInterface
 from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
+@deprecated(
+    "Per ADR-001: implement EnvAdapter directly "
+    "(see robotics_platform.envs.interfaces) instead of going through the HAL types. "
+    "Will be removed in v0.2.0."
+)
 class SimRobotAdapter:
     """Generic simulation adapter wrapping a MuJoCo Playground environment.
 
@@ -141,6 +150,10 @@ class SimRobotAdapter:
         raise ValueError("Action has neither joint_targets nor ee_target")
 
 
-assert isinstance(SimRobotAdapter(), RobotInterface), (
-    "SimRobotAdapter must satisfy RobotInterface Protocol"
-)
+import warnings  # noqa: E402
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", DeprecationWarning)
+    assert isinstance(SimRobotAdapter(), RobotInterface), (
+        "SimRobotAdapter must satisfy RobotInterface Protocol"
+    )

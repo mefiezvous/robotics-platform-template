@@ -8,6 +8,18 @@ import pytest
 from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
+class TestDeprecationWarnings:
+    """ADR-001 Phase 2: Observation and Action are deprecated."""
+
+    def test_observation_emits_deprecation_warning(self) -> None:
+        with pytest.warns(DeprecationWarning, match="ADR-001"):
+            Observation()
+
+    def test_action_emits_deprecation_warning(self) -> None:
+        with pytest.warns(DeprecationWarning, match="ADR-001"):
+            Action(joint_targets=np.zeros(7))
+
+
 class TestObservation:
     def test_default_construction(self) -> None:
         obs = Observation()

@@ -37,6 +37,14 @@ def make_mock_env() -> MagicMock:
     return env
 
 
+class TestSimRobotAdapterDeprecation:
+    """ADR-001 Phase 2: SimRobotAdapter is deprecated."""
+
+    def test_emits_deprecation_warning(self) -> None:
+        with pytest.warns(DeprecationWarning, match="ADR-001"):
+            SimRobotAdapter()
+
+
 class TestSimRobotAdapterProtocol:
     def test_satisfies_robot_interface(self) -> None:
         adapter = SimRobotAdapter()

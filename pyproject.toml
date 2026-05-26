@@ -17,6 +17,7 @@ keywords = ["robotics", "hal", "abstraction", "protocol", "mujoco"]
 dependencies = [
     "numpy>=1.26",
     "loguru>=0.7",
+    "typing-extensions>=4.5",
 ]
 
 [project.optional-dependencies]

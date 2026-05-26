@@ -1,14 +1,22 @@
 # SPDX-FileCopyrightText: 2026 Arthur Mouraud
 # SPDX-License-Identifier: Apache-2.0
-"""HAL data types — Observation, Action, RobotCapabilities."""
+"""HAL data types — Observation, Action, RobotCapabilities.
+
+Deprecated since 2026-05-25 — see docs/adr/ADR-001-unify-on-envadapter.md.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
 import numpy as np
+from typing_extensions import deprecated
 
 
+@deprecated(
+    "Per ADR-001: use dict[str, np.ndarray] + RobotSpec (ml-core) instead. "
+    "Will be removed in v0.2.0."
+)
 @dataclass
 class Observation:
     """Sensor observation from a robot at a single timestep.
@@ -20,6 +28,9 @@ class Observation:
         ee_pose: End-effector pose [x, y, z, qw, qx, qy, qz], shape (7,).
         images: Named RGB images, shape (H, W, 3) each, uint8.
         proprioceptive: Scalar proprioceptive readings (e.g., gripper force).
+
+    Deprecated since 2026-05-25 — see ADR-001. Use ``dict[str, np.ndarray]``
+    together with ``RobotSpec`` from ml-core instead. Will be removed in v0.2.0.
     """
 
     timestamp: float = 0.0
@@ -30,6 +41,9 @@ class Observation:
     proprioceptive: dict[str, float] = field(default_factory=dict)
 
 
+@deprecated(
+    "Per ADR-001: use np.ndarray + RobotSpec.action_dim instead. Will be removed in v0.2.0."
+)
 @dataclass
 class Action:
     """Control action to apply to a robot.
@@ -40,6 +54,9 @@ class Action:
         joint_targets: Target joint positions in radians, shape (n_dof,).
         ee_target: Target EE pose [x, y, z, qw, qx, qy, qz], shape (7,).
         gripper_state: Normalized gripper opening [0.0=closed, 1.0=open].
+
+    Deprecated since 2026-05-25 — see ADR-001. Use ``np.ndarray`` directly,
+    with shape described by ``RobotSpec.action_dim``. Will be removed in v0.2.0.
     """
 
     joint_targets: np.ndarray | None = None
