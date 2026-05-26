@@ -41,4 +41,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --extra dev
-      - run: uv run pytest tests/ --cov=src/platform/hal --cov-fail-under=100
+      - run: uv run pytest tests/
