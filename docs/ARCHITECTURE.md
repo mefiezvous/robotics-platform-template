@@ -2,6 +2,8 @@
 
 Generic, Protocol-based abstraction layer for robotics. Zero hardware-specific code, zero dependencies beyond `numpy` and `loguru`.
 
+> **Status (2026-05-25)** — Per [ADR-001](adr/ADR-001-unify-on-envadapter.md), `EnvAdapter` is the canonical abstraction. The `hal/` layer (`RobotInterface`, `Observation`, `Action`, `SimRobotAdapter`) is **deprecated** and scheduled for removal in `v0.2.0`. See [GLOSSARY.md](GLOSSARY.md) for the live vocabulary.
+
 ## Design principle: structural subtyping
 
 All contracts are defined as `typing.Protocol` (with `@runtime_checkable`). Implementers don't inherit — they just need to match the method signatures. This decouples the consumer code from the adapter library.
@@ -33,7 +35,16 @@ src/robotics_platform/
     └── registry.py      EnvAdapterRegistry + @register decorator
 ```
 
-## HAL layer — what each module provides
+## Adapters — canonical vs deprecated
+
+| Layer | Status | Purpose | Used by |
+|---|---|---|---|
+| `envs/` (`EnvAdapter` + `EnvAdapterRegistry`) | **Canonical** | Gym-style adapter, `dict` obs + `ndarray` action, schema described declaratively by `RobotSpec` (ml-core) | All pipeline code (collect/train/eval) in `lerobot-playground-portfolio`; target for `_private/my-robot-stack` migration (Phase 3) |
+| `hal/` (`RobotInterface`, `Observation`, `Action`, `SimRobotAdapter`) | **Deprecated — remove in v0.2.0** | Original structured types (joint_pos/vel/ee_pose 21-dim, structured Action) | None in hot path. Still implemented by `MyRobotAdapter` (private) pending migration. |
+
+See [ADR-001](adr/ADR-001-unify-on-envadapter.md) for the rationale.
+
+## HAL layer — what each module provides (deprecated, retained for migration)
 
 ### `hal/interfaces.py` — `RobotInterface`
 
