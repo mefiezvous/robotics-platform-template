@@ -11,14 +11,14 @@ repos:
         always_run: true
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.0
+    rev: v0.15.14  # matches uv.lock ruff==0.15.14
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v2.1.0  # matches uv.lock mypy==2.1.0
     hooks:
       - id: mypy
         args: [--ignore-missing-imports]

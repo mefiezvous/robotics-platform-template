@@ -53,6 +53,13 @@ For an environment adapter, use the `EnvAdapter` Protocol from `robotics_platfor
 - [docs/ROADMAP.md](docs/ROADMAP.md) — forward-looking
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — workflow & strict rules
 
+## Contributing & IP boundary
+
+Contributions are welcome under the Apache-2.0 terms in [LICENSE](LICENSE) (see also [NOTICE](NOTICE)).
+This template layer must remain **100% generic** — no hardware-specific code, no robot brand names, no references to private implementations. The `_private/` namespace is enforced at the pre-commit level. Full workflow rules and the proprietary-layer ban are documented in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
