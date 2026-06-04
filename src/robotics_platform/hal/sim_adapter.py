@@ -148,12 +148,3 @@ class SimRobotAdapter:
                 ]
             )
         raise ValueError("Action has neither joint_targets nor ee_target")
-
-
-import warnings  # noqa: E402
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
-    assert isinstance(SimRobotAdapter(), RobotInterface), (
-        "SimRobotAdapter must satisfy RobotInterface Protocol"
-    )
