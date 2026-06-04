@@ -13,7 +13,6 @@ import numpy as np
 from loguru import logger
 from typing_extensions import deprecated
 
-from robotics_platform.hal.interfaces import RobotInterface
 from robotics_platform.hal.types import Action, Observation, RobotCapabilities
 
 
