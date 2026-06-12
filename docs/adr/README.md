@@ -43,3 +43,4 @@ Each ADR file: `ADR-NNN-short-kebab-title.md`.
 | ADR | Title | Status |
 |-----|-------|--------|
 | [ADR-001](ADR-001-unify-on-envadapter.md) | Unify on EnvAdapter, deprecate RobotInterface/Observation/Action | Accepted 2026-05-25 |
+| [ADR-002](ADR-002-env-adapter-factory-registration.md) | EnvAdapterRegistry: accept zero-arg factory callables | Implemented 2026-06-10 |

@@ -12,7 +12,7 @@ from loguru import logger
 if TYPE_CHECKING:
     from robotics_platform.envs.interfaces import EnvAdapter
 
-_REGISTRY: dict[str, type] = {}
+_REGISTRY: dict[str, type | Callable[[], EnvAdapter]] = {}
 
 
 def register(name: str) -> Callable[[type], type]:
@@ -35,18 +35,37 @@ def register(name: str) -> Callable[[type], type]:
     return decorator
 
 
+def register_factory(name: str, factory: Callable[[], EnvAdapter]) -> None:
+    """Register a zero-arg factory (e.g. ``functools.partial``) under name.
+
+    Used by data-driven registrations where the adapter needs constructor
+    arguments baked in (e.g. ``functools.partial(MujocoPlaygroundAdapter,
+    env_name=..., task_description=...)``), as an alternative to the
+    ``@register`` class decorator.
+
+    Args:
+        name: Unique adapter name.
+        factory: Zero-arg callable returning an ``EnvAdapter`` instance.
+    """
+    if name in _REGISTRY:
+        logger.warning(f"EnvAdapterRegistry: overwriting existing adapter '{name}'")
+    _REGISTRY[name] = factory
+    logger.debug(f"EnvAdapterRegistry: registered factory '{name}'")
+
+
 class EnvAdapterRegistry:
     """Lookup registered EnvAdapter adapters by name."""
 
     @staticmethod
-    def get(name: str) -> type[EnvAdapter]:
-        """Return the adapter class registered under the given name.
+    def get(name: str) -> type[EnvAdapter] | Callable[[], EnvAdapter]:
+        """Return the adapter class or factory registered under the given name.
 
         Args:
-            name: Adapter name as passed to @register().
+            name: Adapter name as passed to @register() or register_factory().
 
         Returns:
-            The adapter class.
+            A zero-arg callable that returns an ``EnvAdapter`` instance — either
+            the adapter class itself or a factory function.
 
         Raises:
             KeyError: If no adapter is registered under that name.
