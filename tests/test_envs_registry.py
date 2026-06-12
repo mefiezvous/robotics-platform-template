@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from robotics_platform.envs.registry import EnvAdapterRegistry, register
+from robotics_platform.envs.registry import EnvAdapterRegistry, register, register_factory
 
 
 class DummyEnvAdapter:
@@ -81,6 +81,30 @@ class TestEnvAdapterRegistry:
     def test_list_adapters_returns_list(self) -> None:
         adapters = EnvAdapterRegistry.list_adapters()
         assert isinstance(adapters, list)
+
+    def test_register_factory_and_get(self) -> None:
+        import functools
+
+        factory = functools.partial(DummyEnvAdapter)
+        register_factory("test_factory_env_adapter", factory)
+
+        retrieved = EnvAdapterRegistry.get("test_factory_env_adapter")
+        assert retrieved is factory
+        assert isinstance(retrieved(), DummyEnvAdapter)
+
+    def test_register_factory_overwrite_warns(self, caplog: pytest.LogCaptureFixture) -> None:
+        from loguru import logger
+
+        handler_id = logger.add(caplog.handler, format="{message}", level="WARNING")
+        try:
+            register_factory("test_factory_overwrite", DummyEnvAdapter)
+
+            with caplog.at_level("WARNING"):
+                register_factory("test_factory_overwrite", DummyEnvAdapter)
+
+            assert any("overwriting" in rec.message for rec in caplog.records)
+        finally:
+            logger.remove(handler_id)
 
     def test_register_overwrite_warns(self, caplog: pytest.LogCaptureFixture) -> None:
         """Registering the same name twice should log a warning (not raise)."""
